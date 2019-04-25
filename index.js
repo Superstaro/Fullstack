@@ -4,7 +4,6 @@ const app = express()
 app.use(express.json())
 app.use(express.static('public'))
 
-
 const tasks = []
 let id = 0
 
@@ -14,10 +13,15 @@ app.get('/tasks', (request, response) => {
 
 app.post('/tasks', (request, response) => {
   const task = request.body
-  id++
-  task.id = id
-  tasks.push(task)
-  response.json(task)
+  if(task.description){
+    id++
+    task.id = id
+    task.createdAt = new Date()
+    tasks.push(task)
+    response.json(task)
+  }else{
+    response.status(422).json({error: "description required"})
+  }
 })
 
 app.delete('/tasks/:id', (request, response) => {
@@ -32,6 +36,6 @@ app.delete('/tasks/:id', (request, response) => {
   }
 })
 
-app.listen(3000)
+app.listen(process.env.PORT || 3000)
 
-console.log("API is working")
+console.log("APP is working")
